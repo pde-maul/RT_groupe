@@ -6,7 +6,7 @@
 /*   By: nterol <nterol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/11 19:04:15 by nterol            #+#    #+#             */
-/*   Updated: 2017/05/29 16:25:19 by nterol           ###   ########.fr       */
+/*   Updated: 2017/06/02 16:03:24 by pde-maul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,19 @@ typedef struct		s_control {
 }					t_control;
 
 int					main(int ac, char **av);
+void				clean(t_control *e);
+void 				clean_exit(t_control *e);
+int					key_press(int key, t_control *uni);
+void				init_env(t_control *uni);
+int					intersection(t_ray *r, t_sphere *s, float *t);
+void				launcher(t_control *uni);
+
+t_vector			vectorScale(float c, t_vector *v);
+t_vector			vectorAdd(t_vector v1, t_vector v2);
+float 				vectorDot(t_vector *v1, t_vector *v2);
+t_vector			vectorSub(t_vector *v1, t_vector *v2);
+
+int					color_set(t_control *uni);
+
+
 #endif

@@ -3,64 +3,61 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nterol <nterol@student.42.fr>              +#+  +:+       +#+         #
+#    By: pde-maul <pde-maul@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2017/03/22 14:31:35 by nterol            #+#    #+#              #
-#    Updated: 2017/05/29 17:38:18 by nterol           ###   ########.fr        #
+#    Created: 2017/02/27 17:11:00 by pde-maul          #+#    #+#              #
+#    Updated: 2017/06/02 16:55:34 by pde-maul         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRC_PATH = ./src/
-OBJ_PATH = ./obj/
-INC_PATH = ./include/
-LIB_PATH = ./lib/libft/
-MLX_PATH = ./lib/minilibx_macos/
+NAME = RT/RTv1
 
-NAME = rtv1
-CFLAGS = -Wall -Werror -Wextra -Ofast
-FRAM = -L$(MLX_PATH) -I$(MLX_PATH) -lmlx -framework OpenGL -framework Appkit
+CC = gcc
 
-SRC_NAME = main.c calculate.c launcher.c run.c solid.c
-OBJ_NAME = $(SRC_NAME:.c=.o)
-LIB_NAME = libft.a
+FLAG = -Wall -Werror -Wextra -I $(INC_DIR) -g
 
-SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
-OBJ = $(addprefix $(OBJ_PATH), $(OBJ_NAME))
-INC = $(addprefix, -I, $(INC_PATH))
-LIB = $(LIB_PATH)$(LIB_NAME)
+# gcc main.c -L. -lmlx -L libft/ -lft -framework OpenGL -framework AppKit
+INC_DIR = includes/
 
-all : $(NAME)
+SRC_DIR = src/
 
-$(NAME) : $(OBJ)
-	make -C $(LIB_PATH) re
-	make -C $(MLX_PATH) re
-	gcc $(CFLAGS) $(LIB) $(INC) $(OBJ) $(FRAM) -o $(NAME)
+SRC = 	main.c \
+		draw.c \
+		launcher.c\
+		event.c \
+		run.c\
+		calculate.c \
+		solid.c \
 
-$(OBJ_PATH)%.o: $(SRC_PATH)%.c
-	@mkdir -p $(OBJ_PATH)
-	gcc $(CFLAGS) -I$(MLX_PATH) $(INC) -o $@ -c $<
+OBJ = $(SRC:.c=.o)
 
-nolib: $(OBJ)
-	gcc $(CFLAGS) $(LIB) $(INC) $(OBJ) $(FRAM) -o $(NAME)
+I_LIBFT = -Ilibft
 
-cleanmlx:
-	make -C $(MLX_PATH) clean
+LIBFT = -L libft/ -lft -I libft/
 
-cleanlib:
-	make -C $(LIB_PATH) clean
+LIBMLX =  -L./minilibx_macos -lmlx -lm -framework OpenGL -framework AppKit\
+ 			-Iminilibx_macos
 
-fcleanlib:
-	make -C $(LIB_PATH) fclean
+.PHONY:clean re all fclean
 
+all: $(NAME)
 
-clean : cleanmlx cleanlib
-	rm -fv $(OBJ)
-	rm -rf $(OBJ_PATH)
+$(NAME): $(OBJ)
+	@make -C libft
+	@$(CC) $(FLAG) -o $(NAME) $^ $(LIBFT) $(LIBMLX)
+	@echo "\033[33;32m [✓] $(NAME) is ready" "\x1b[31m <3"
 
-fclean : clean fcleanlib
-	rm -fv $(NAME)
+%.o: $(SRC_DIR)%.c
+	@$(CC) $(FLAG) -o $@ -c $<  $(I_LIBFT)
 
-re : fclean all
+clean:
+	@make clean -C libft
+	@rm -f $(OBJ)
+	@echo "\x1b[36m [✓] clean ok"
 
-norme : fclean
-	norminette src/ include/ lib/libft/
+fclean: clean
+	@make fclean -C libft
+	@rm -f $(NAME)
+	@echo "\x1b[36m [✓] fclean ok"
+
+re: fclean all
